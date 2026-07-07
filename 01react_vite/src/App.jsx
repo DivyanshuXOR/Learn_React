@@ -3,8 +3,13 @@ import Chai from './chai.jsx'
 
 
 function App() {
+  const ADDONTEXTVAR = "with Divyanshu"
   return(
-    <Chai/>
+    <>
+    <Chai />
+    <h2>{ADDONTEXTVAR}</h2>
+    </>
+
   )
 }
 
