@@ -39,6 +39,9 @@ export class AuthService{
         try {
             return await this.account.get();
         } catch (error) {
+            if (error?.code === 401 || String(error?.message || "").includes("missing scopes")) {
+                return null;
+            }
             console.log("Appwrite service :: getCurrentUser :: error", error);
         }
         return null;
