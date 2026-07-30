@@ -19,35 +19,42 @@ export default function PostForm({post}) {
     const userData = useSelector(state => state.auth.userData)
 
     const submit = async (data)=> {
-        if(post){
-            const file = data.image[0] ? appwriteService.uploadFile(data.image[0]) : null
-            if (file){
-                appwriteService.deleteFile(post.featuredImage)
+        if (post) {
+            const file = data.image?.[0] ? await appwriteService.uploadFile(data.image[0]) : null
+
+            if (file && post.featuredImage) {
+                await appwriteService.deleteFile(post.featuredImage)
             }
+
             const dbPost = await appwriteService.updatePost(post.$id, {
                 ...data,
-                featuredImage: file ? file.$id : undefined,
-                if (dbPost){
-                    navigate(`/post/${dbPost.$id}`)
-                }
-
+                featuredImage: file ? file.$id : post.featuredImage,
             })
 
-        } else{
-            const file = await appwriteService.uploadFile(data.image[0]);
-
-            if(file){
-                const fileId = file.$id
-                data.featuredImage = fileId
-                const dbPost = await appwriteService.
-                createPost({
-                    ...data,
-                    userId: userData.$id,
-                })
-                if(dbPost) {
-                    navigate(`/post/${dbPost.$id}`)
-                }
+            if (dbPost) {
+                navigate(`/post/${dbPost.$id}`)
             }
+            return
+        }
+
+        if (!userData?.$id) {
+            return
+        }
+
+        const file = await appwriteService.uploadFile(data.image[0])
+
+        if (!file) {
+            return
+        }
+
+        const dbPost = await appwriteService.createPost({
+            ...data,
+            featuredImage: file.$id,
+            userId: userData.$id,
+        })
+
+        if (dbPost) {
+            navigate(`/post/${dbPost.$id}`)
         }
     }
 

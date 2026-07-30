@@ -24,7 +24,7 @@ export class Service{
                     content,
                     featuredImage,
                     status,
-                    userId, 
+                    userid: userId,
                 }
             )
         } catch (error) {
@@ -105,6 +105,9 @@ export class Service{
 
     async deleteFile(fileId){
         try {
+            if (!fileId) {
+                return false;
+            }
             return await this.bucket.deleteFile(
                 conf.appwriteBucketId,
                 fileId
@@ -116,6 +119,9 @@ export class Service{
     }
 
     getFilePreview(fileId){
+        if (!fileId) {
+            return null;
+        }
         return this.bucket.getFilePreview(
             conf.appwriteBucketId,
             fileId
